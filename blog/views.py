@@ -2,6 +2,7 @@ import uuid
 from uuid import uuid4
 
 import markdown as markdown
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, get_list_or_404
@@ -69,6 +70,7 @@ def detail(request, post_id):
     return render(request, 'blog/detail.html', context)
 
 
+@login_required(login_url='blog_auth:login')
 def edit(request, post_id=None):
     post = Post.objects.get(pk=uuid.UUID(post_id))
     title = request.POST.get('title')
