@@ -16,6 +16,9 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
+    class Meta:
+        db_table = 'blog_posts'
+
 
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -26,3 +29,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+    class Meta:
+        db_table = 'blog_comments'
