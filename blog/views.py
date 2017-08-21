@@ -11,6 +11,7 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.urls import reverse
 
 from .models import Post, Comment
+from .form import PostForm
 
 
 def index(request):
@@ -73,14 +74,24 @@ def detail(request, post_id):
 @login_required(login_url='blog_auth:login')
 def edit(request, post_id=None):
     post = Post.objects.get(pk=uuid.UUID(post_id))
-    title = request.POST.get('title')
-    summary = request.POST.get('summary')
-    content = request.POST.get('content')
-    if title and summary and content:
-        post.title = title
-        post.summary = summary
-        post.content = content
-        post.save()
-        return HttpResponseRedirect(reverse('blog:detail', args=(post_id,)))
 
-    return render(request, 'blog/editor.html', {'post': post})
+    # title = request.POST.get('title')
+    # summary = request.POST.get('summary')
+    # content = request.POST.get('content')
+    # if title and summary and content:
+    #     post.title = title
+    #     post.summary = summary
+    #     post.content = content
+    #     post.save()
+    #     return HttpResponseRedirect(reverse('blog:detail', args=(post_id,)))
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        print(form.errors.as_json())
+        print(form.errors)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('blog:detail', args=(post_id,)))
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'blog/editor.html', {'post': post, 'form': form})

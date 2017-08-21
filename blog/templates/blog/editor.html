@@ -9,17 +9,37 @@
 {% block content %}
     <div class="uk-width-medium-3-4">
         <article class="uk-article">
-            <form id="form" method="post" class="uk-form">
+            {#            <form id="form" method="post" class="uk-form">#}
+            {#                {% csrf_token %}#}
+            {#                <div class="uk-form-row">#}
+            {#                    <input type="text" name="title" class="uk-width-1-1 uk-text-large" value="{{ post.title }}">#}
+            {#                </div>#}
+            {#                <div class="uk-form-row">#}
+            {#                    <textarea name="summary" class="uk-width-1-1">{{ post.summary|safe }}</textarea>#}
+            {#                </div>#}
+            {#                <div class="uk-form-row">#}
+            {#                    <textarea id="content" name="content">{{ post.content|safe }}</textarea>#}
+            {#                </div>#}
+            {#                <div class="uk-form-row">#}
+            {#                    <button type="submit" class="uk-button uk-button-primary">#}
+            {#                        <i class="uk-icon-save">保存</i>#}
+            {#                    </button>#}
+            {#                </div>#}
+            {#            </form>#}
+
+            <form method="post" class="uk-form">
                 {% csrf_token %}
-                <div class="uk-form-row">
-                    <input type="text" name="title" class="uk-width-1-1 uk-text-large" value="{{ post.title }}">
-                </div>
-                <div class="uk-form-row">
-                    <textarea name="summary" class="uk-width-1-1">{{ post.summary|safe }}</textarea>
-                </div>
-                <div class="uk-form-row">
-                    <textarea id="content" name="content">{{ post.content|safe }}</textarea>
-                </div>
+                {% for field in form %}
+                    <div class="uk-form-row">
+                        {% for error in field.errors %}
+                            <div class="uk-alert uk-alert-danger" data-uk-alert>
+                                <a href="" class="uk-alert-close uk-close"></a>
+                                <p>{{ error }}</p>
+                            </div>
+                        {% endfor %}
+                        {{ field.label_tag }} {{ field }}
+                    </div>
+                {% endfor %}
                 <div class="uk-form-row">
                     <button type="submit" class="uk-button uk-button-primary">
                         <i class="uk-icon-save">保存</i>
