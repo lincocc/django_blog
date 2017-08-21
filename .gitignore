@@ -102,3 +102,4 @@ ENV/
 *.iml
 out
 gen
+db.sqlite3
