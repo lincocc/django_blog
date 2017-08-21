@@ -1,0 +1,48 @@
+{% extends "blog/base.html" %}
+
+{% block title %}blogs{% endblock title %}
+
+{% block content %}
+
+    <div class="uk-width-medium-3-4">
+
+    {% for post in posts %}
+        <article class="uk-article">
+            <h2><a href="/">{{post.title}}</a> </h2>
+            <p class="uk-article-meta">发表于{{ post.pub_date |date:"Y-m-d H:i:s"}}</p>
+            <p>{{ post.summary }}</p>
+            <p><a href="/">继续阅读 <i class="uk-icon-angle-double-right"></i></a></p>
+        </article>
+    {% endfor %}
+
+    <ul class="uk-pagination">
+        {% if posts.has_previous %}
+            <li><a href="?page={{ posts.previous_page_number }}"><i class="uk-icon-angle-double-left"></i></a></li>
+        {% else %}
+            <li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>
+        {% endif %}
+
+        {% for page in page_range %}
+            {% if page %}
+                {% if page != posts.number %}
+                    <li>
+                        <a href="?page={{ page }}">{{ page }}</a>
+                    </li>
+                {% else %}
+                    <li class="uk-active"><span>{{ posts.number }}</span></li>
+                {% endif %}
+            {% else %}
+                <li class="uk-disabled"><span>...</span></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if posts.has_next %}
+            <li><a href="?page={{ posts.next_page_number }}"><span><i class="uk-icon-angle-double-right"></i></span></a></li>
+        {% else %}
+            <li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>
+        {% endif %}
+    </ul>
+    </div>
+
+
+{% endblock %}
