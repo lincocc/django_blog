@@ -5,7 +5,8 @@
 {% block content %}
     <div class="uk-width-medium-3-4">
         <article class="uk-article">
-            <h2>{{ post.title }}</h2>
+            <h2 class="uk-article-title">{{ post.title }}</h2>  <a href="{% url 'blog:edit' post.id.hex %}"><i
+                class="uk-icon-edit"></i> </a>
             <p class="uk-article-meta">发表于{{ post.pub_date|date:"Y-m-d H:i:s" }}</p>
             <p>{{ post.content|safe }}</p>
         </article>

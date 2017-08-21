@@ -1,0 +1,36 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+{% block beforehead %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'blog/css/simplemde.min.css' %}"/>
+    <script src="{% static 'blog/js/simplemde.min.js' %}"></script>
+{% endblock %}
+{% block content %}
+    <div class="uk-width-medium-3-4">
+        <article class="uk-article">
+            <form id="form" method="post" class="uk-form">
+                {% csrf_token %}
+                <div class="uk-form-row">
+                    <input type="text" name="title" class="uk-width-1-1 uk-text-large" value="{{ post.title }}">
+                </div>
+                <div class="uk-form-row">
+                    <textarea name="summary" class="uk-width-1-1">{{ post.summary|safe }}</textarea>
+                </div>
+                <div class="uk-form-row">
+                    <textarea id="content" name="content">{{ post.content|safe }}</textarea>
+                </div>
+                <div class="uk-form-row">
+                    <button type="submit" class="uk-button uk-button-primary">
+                        <i class="uk-icon-save">保存</i>
+                    </button>
+                </div>
+            </form>
+        </article>
+    </div>
+
+    <script>
+        {#        var simplemde = new SimpleMDE({ element: document.getElementById("content")});#}
+        var simplemde = new SimpleMDE({element: $("#content")[0]});
+    </script>
+{% endblock %}

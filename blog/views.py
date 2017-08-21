@@ -67,3 +67,18 @@ def detail(request, post_id):
                                      extensions=['markdown.extensions.extra', 'markdown.extensions.codehilite'])
     context = {'post': post, 'comments': comments}
     return render(request, 'blog/detail.html', context)
+
+
+def edit(request, post_id=None):
+    post = Post.objects.get(pk=uuid.UUID(post_id))
+    title = request.POST.get('title')
+    summary = request.POST.get('summary')
+    content = request.POST.get('content')
+    if title and summary and content:
+        post.title = title
+        post.summary = summary
+        post.content = content
+        post.save()
+        return HttpResponseRedirect(reverse('blog:detail', args=(post_id,)))
+
+    return render(request, 'blog/editor.html', {'post': post})
