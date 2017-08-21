@@ -8,10 +8,10 @@
 
     {% for post in posts %}
         <article class="uk-article">
-            <h2><a href="/">{{post.title}}</a> </h2>
+            <h2><a href="{% url 'blog:detail' post.id.hex %}">{{ post.title }}</a></h2>
             <p class="uk-article-meta">发表于{{ post.pub_date |date:"Y-m-d H:i:s"}}</p>
             <p>{{ post.summary }}</p>
-            <p><a href="/">继续阅读 <i class="uk-icon-angle-double-right"></i></a></p>
+            <p><a href="{% url 'blog:detail' post.id.hex %}">继续阅读 <i class="uk-icon-angle-double-right"></i></a></p>
         </article>
     {% endfor %}
 

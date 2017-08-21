@@ -53,3 +53,17 @@ def get_page_range(current_page, paginator):
 
     return page_range
 
+
+def detail(request, post_id):
+    content = request.POST.get('content')
+
+    post = Post.objects.get(pk=uuid.UUID(post_id))
+    if content:
+        Comment.objects.create(content=content, user=request.user, post=post)
+        return HttpResponseRedirect(reverse('blog:detail', args=(post_id,)))
+    comments = post.comment_set.order_by('-pub_date').all()
+    # post.content = markdown2.markdown(text=post.content)
+    post.content = markdown.markdown(post.content,
+                                     extensions=['markdown.extensions.extra', 'markdown.extensions.codehilite'])
+    context = {'post': post, 'comments': comments}
+    return render(request, 'blog/detail.html', context)
