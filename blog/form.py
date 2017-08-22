@@ -8,8 +8,8 @@ class PostForm(ModelForm):
         model = Post
         fields = ['title', 'summary', 'content']
         widgets = {
-            'title': TextInput(attrs={'class': 'uk-width-1-1 uk-text-large'}),
-            'summary': Textarea(attrs={'class': 'uk-width-1-1', 'rows': 3}),
+            'title': TextInput(attrs={'class': 'uk-width-1-1 uk-text-large uk-input'}),
+            'summary': Textarea(attrs={'class': 'uk-width-1-1 uk-textarea', 'rows': 3}),
             'content': Textarea(attrs={'id': 'content'}),
         }
         error_messages = {

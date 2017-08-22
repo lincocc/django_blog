@@ -5,13 +5,18 @@
 {% block content %}
     {% load static %}
     {% static 'blog/image/user.png' as user_pic %}
-    <div class="uk-width-medium-3-4">
+    <div class="uk-width-3-4">
         <article class="uk-article">
-            <h2 class="uk-article-title">{{ post.title }}</h2>
-            {% if user.is_authenticated %}
-                <a href="{% url 'blog:edit' post.id.hex %}"><i class="uk-icon-edit"></i> </a>
-            {% endif %}
-            <p class="uk-article-meta">{{ post.user.username }}发表于{{ post.pub_date|date:"Y-m-d H:i:s" }}</p>
+            <h2 class="uk-article-title">{{ post.title|title }}</h2>
+
+            <ul class="uk-comment-meta uk-subnav uk-subnav-divider uk-margin-remove-top">
+                <li>{{ post.user.username }}发表于{{ post.pub_date|date:"Y-m-d H:i:s" }}</li>
+                {% if user.is_authenticated %}
+                    <li>
+                    <a href="{% url 'blog:edit' post.id.hex %}"><span uk-icon="icon: edit">edit</span> </a>
+                    </li>
+                {% endif %}
+            </ul>
             <p>{{ post.content|safe }}</p>
         </article>
         <hr class="uk-article-divider"/>
@@ -20,23 +25,27 @@
         {% if user.is_authenticated %}
             <h3>发表评论</h3>
             <article class="uk-comment">
-                <header class="uk-comment-header">
-                    <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ user_pic }}">
-                    <h4 class="uk-comment-title">{{ user.username }}</h4>
+                <header class="uk-comment-header uk-grid-medium uk-flex-middle" uk-grid>
+                    <div class="uk-width-auto">
+                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50"
+                             src="{{ user_pic }}">
+                    </div>
+                    <div class="uk-width-expand">
+                        <h4 class="uk-comment-title uk-margin-remove"><a class="uk-link-reset"
+                                                                         href="#">{{ user.username }}</a></h4>
+                    </div>
                 </header>
                 <div class="uk-comment-body">
-                    <form id="form-comment" class="uk-form" method="post">
+                    <form id="form-comment" method="post">
                         {% csrf_token %}
-                        <div class="uk-alert uk-alert-danger uk-hidden"></div>
-                        <div class="uk-form-row">
+                        <div class="uk-margin">
+
                             <textarea rows="6" id="content" name="content" placeholder="说点什么吧"
-                                      style="width: 100%;resize: none"></textarea>
-                        </div>
-                        <div class="uk-form-row">
+                                      class="uk-textarea"></textarea>
+                            </div>
                             <button type="submit" class="uk-button uk-button-primary">
-                                <i class="uk-icon-comment">发表评论</i>
+                                <span uk-icon="icon: check"></span>发表评论
                             </button>
-                        </div>
                     </form>
                 </div>
             </article>
@@ -48,12 +57,19 @@
                 {% for comment in comments %}
                     <li>
                         <article class="uk-comment">
-                            <header class="uk-comment-header">
-                                <img class="uk-comment-avatar uk-border-circle" width="50" height="50"
-                                     src="{{ user_pic }}">
-                                <h4 class="uk-comment-title">{{ comment.user.username }}
-                                    {% if comment.user.id == post.user.id %}(作者){% endif %}</h4>
-                                <p class="uk-comment-meta">{{ comment.pub_date|date:"Y-m-d H:i:s" }}</p>
+                            <header class="uk-comment-header uk-grid-medium uk-flex-middle" uk-grid>
+                                <div class="uk-width-auto">
+                                    <img class="uk-comment-avatar uk-border-circle" width="50" height="50"
+                                         src="{{ user_pic }}">
+                                </div>
+                                <div class="uk-width-expand">
+                                    <h4 class="uk-comment-title uk-margin-remove"><a class="uk-link-reset"
+                                                                                     href="#">{{ comment.user.username }}
+                                        {% if comment.user.id == post.user.id %}(作者){% endif %}</a></h4>
+                                    <ul class="uk-comment-meta uk-subnav uk-subnav-divider uk-margin-remove-top">
+                                        <li>{{ comment.pub_date|date:"Y-m-d H:i:s" }}</li>
+                                    </ul>
+                                </div>
                             </header>
                             <div class="uk-comment-body">
                                 {{ comment.content|safe }}

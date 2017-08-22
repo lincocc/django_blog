@@ -4,45 +4,45 @@
 
 {% block content %}
 
-    <div class="uk-width-medium-3-4">
+    <div class="uk-width-3-4">
 
-    {% for post in posts %}
-        <article class="uk-article">
-            <h2><a href="{% url 'blog:detail' post.id.hex %}">{{ post.title }}</a></h2>
-            <p class="uk-article-meta">发表于{{ post.pub_date |date:"Y-m-d H:i:s"}}</p>
-            <p>{{ post.summary }}</p>
-            <p><a href="{% url 'blog:detail' post.id.hex %}">继续阅读 <i class="uk-icon-angle-double-right"></i></a></p>
-        </article>
-    {% endfor %}
-
-    <ul class="uk-pagination">
-        {% if posts.has_previous %}
-            <li><a href="?page={{ posts.previous_page_number }}"><i class="uk-icon-angle-double-left"></i></a></li>
-        {% else %}
-            <li class="uk-disabled"><span><i class="uk-icon-angle-double-left"></i></span></li>
-        {% endif %}
-
-        {% for page in page_range %}
-            {% if page %}
-                {% if page != posts.number %}
-                    <li>
-                        <a href="?page={{ page }}">{{ page }}</a>
-                    </li>
-                {% else %}
-                    <li class="uk-active"><span>{{ posts.number }}</span></li>
-                {% endif %}
-            {% else %}
-                <li class="uk-disabled"><span>...</span></li>
-            {% endif %}
+        {% for post in posts %}
+            <article class="uk-article">
+                <h2><a href="{% url 'blog:detail' post.id.hex %}" class="uk-link-reset uk-button-text">{{ post.title|title }}</a></h2>
+                <p class="uk-article-meta">发表于{{ post.pub_date |date:"Y-m-d H:i:s" }}</p>
+                <p>{{ post.summary }}</p>
+                <div><a href="{% url 'blog:detail' post.id.hex %}" class="uk-button uk-button-text">继续阅读</a></div>
+            </article>
         {% endfor %}
 
-        {% if posts.has_next %}
-            <li><a href="?page={{ posts.next_page_number }}"><span><i class="uk-icon-angle-double-right"></i></span></a></li>
-        {% else %}
-            <li class="uk-disabled"><span><i class="uk-icon-angle-double-right"></i></span></li>
-        {% endif %}
-    </ul>
-    </div>
+        <ul class="uk-pagination uk-flex-center">
+            {% if posts.has_previous %}
+                <li><a href="?page={{ posts.previous_page_number }}"><span uk-pagination-previous></span></a></li>
+            {% else %}
+                <li class="uk-disabled"><a><span uk-pagination-previous></span></a></li>
+            {% endif %}
 
+            {% for page in page_range %}
+                {% if page %}
+                    {% if page != posts.number %}
+                        <li>
+                            <a href="?page={{ page }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li class="uk-active"><span>{{ posts.number }}</span></li>
+                    {% endif %}
+                {% else %}
+                    <li class="uk-disabled"><span>...</span></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if posts.has_next %}
+                <li><a href="?page={{ posts.next_page_number }}"><span uk-pagination-next></span></a>
+                </li>
+            {% else %}
+                <li class="uk-disabled"><a><span uk-pagination-next></span></a></li>
+            {% endif %}
+        </ul>
+    </div>
 
 {% endblock %}

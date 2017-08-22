@@ -27,24 +27,25 @@
             {#                </div>#}
             {#            </form>#}
 
-            <form method="post" class="uk-form">
+            <form method="post">
                 {% csrf_token %}
                 {% for field in form %}
-                    <div class="uk-form-row">
-                        {% for error in field.errors %}
-                            <div class="uk-alert uk-alert-danger" data-uk-alert>
-                                <a href="" class="uk-alert-close uk-close"></a>
-                                <p>{{ error }}</p>
-                            </div>
-                        {% endfor %}
-                        {{ field.label_tag }} {{ field }}
+                    {% for error in field.errors %}
+                        <div class="uk-alert uk-alert-danger" data-uk-alert>
+                            <a href="" class="uk-alert-close uk-close"></a>
+                            <p>{{ error }}</p>
+                        </div>
+                    {% endfor %}
+                    {{ field.label_tag }}
+                    <div class="uk-margin-bottom">
+                        {{ field }}
                     </div>
                 {% endfor %}
-                <div class="uk-form-row">
-                    <button type="submit" class="uk-button uk-button-primary">
-                        <i class="uk-icon-save">保存</i>
-                    </button>
-                </div>
+
+                <button type="submit" class="uk-button uk-button-primary">
+                    保存
+                </button>
+
             </form>
         </article>
     </div>

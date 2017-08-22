@@ -27,7 +27,8 @@ def index(request):
     except EmptyPage:
         posts = paginator.page(paginator.num_pages)
 
-    context = {'posts': posts, 'page_range': get_page_range(posts.number, paginator)}
+    context = {'posts': posts, 'page_range': get_page_range(posts.number, paginator),
+               'post_size': len(post_list), 'current_page': posts.number}
     return render(request, 'blog/index.html', context)
 
 
