@@ -4,13 +4,14 @@ from uuid import uuid4
 import markdown as markdown
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 
 # Create your views here.
 from django.urls import reverse
 
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 from .form import PostForm
 
 
@@ -67,7 +68,8 @@ def detail(request, post_id):
     # post.content = markdown2.markdown(text=post.content)
     post.content = markdown.markdown(post.content,
                                      extensions=['markdown.extensions.extra', 'markdown.extensions.codehilite'])
-    context = {'post': post, 'comments': comments}
+    tags = Tag.objects.annotate(post_count=Count('posts')).order_by('-post_count')[:5]
+    context = {'post': post, 'comments': comments, 'tags':tags}
     return render(request, 'blog/detail.html', context)
 
 
