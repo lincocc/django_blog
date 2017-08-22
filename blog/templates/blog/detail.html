@@ -8,10 +8,13 @@
     <div class="uk-width-medium-3-4">
         <article class="uk-article">
             <h2 class="uk-article-title">{{ post.title }}</h2>
-            {% if user.is_authenticated %}
-                <a href="{% url 'blog:edit' post.id.hex %}"><i class="uk-icon-edit"></i> </a>
-            {% endif %}
-            <p class="uk-article-meta">{{ post.user.username }}发表于{{ post.pub_date|date:"Y-m-d H:i:s" }}</p>
+
+            <p class="uk-article-meta">
+                {{ post.user.username }}发表于{{ post.pub_date|date:"Y-m-d H:i:s" }}
+                {% if user.is_authenticated %}
+                    | <a href="{% url 'blog:edit' post.id.hex %}" class="uk-icon-small"><i class="uk-icon-edit"></i> </a>
+                {% endif %}
+            </p>
             <p>{{ post.content|safe }}</p>
         </article>
         <hr class="uk-article-divider"/>
