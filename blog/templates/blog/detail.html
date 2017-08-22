@@ -15,6 +15,11 @@
                     | <a href="{% url 'blog:edit' post.id.hex %}" class="uk-icon-small"><i class="uk-icon-edit"></i> </a>
                 {% endif %}
             </p>
+            <p>
+                {% for tag in post.tag_set.all %}
+                    <a href="#"><span class="uk-badge uk-badge-notification">{{ tag.name }}</span></a>
+                {% endfor %}
+            </p>
             <p>{{ post.content|safe }}</p>
         </article>
         <hr class="uk-article-divider"/>
