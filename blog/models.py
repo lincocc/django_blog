@@ -33,3 +33,15 @@ class Comment(models.Model):
 
     class Meta:
         db_table = 'blog_comments'
+
+
+class Tag(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=50)
+    posts = models.ManyToManyField(Post)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'blog_tags'
