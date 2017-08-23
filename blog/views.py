@@ -3,6 +3,7 @@ from uuid import uuid4
 
 import markdown as markdown
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect
@@ -12,7 +13,7 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.urls import reverse
 
 from .models import Post, Comment, Tag
-from .form import PostForm
+from .form import PostForm, RegisterForm
 
 
 def index(request):
@@ -69,7 +70,7 @@ def detail(request, post_id):
     post.content = markdown.markdown(post.content,
                                      extensions=['markdown.extensions.extra', 'markdown.extensions.codehilite'])
     tags = Tag.objects.annotate(post_count=Count('posts')).order_by('-post_count')[:5]
-    context = {'post': post, 'comments': comments, 'tags':tags}
+    context = {'post': post, 'comments': comments, 'tags': tags}
     return render(request, 'blog/detail.html', context)
 
 
@@ -89,11 +90,32 @@ def edit(request, post_id=None):
 
     if request.method == 'POST':
         form = PostForm(request.POST, instance=post)
-        print(form.errors.as_json())
-        print(form.errors)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('blog:detail', args=(post_id,)))
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/editor.html', {'post': post, 'form': form})
+
+
+def register(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('blog:index'))
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            try:
+                User.objects.get(email=email)
+                form.add_error(None, {"email": "email exist"})
+            except User.DoesNotExist:
+                User.objects.create_user(username=username, email=email, password=password)
+                return HttpResponseRedirect(reverse('blog_auth:login'))
+
+    else:
+        form = RegisterForm()
+
+    return render(request, 'blog/register.html', {'form': form})
