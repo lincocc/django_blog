@@ -5,8 +5,8 @@
 {% block content %}
     {% load static %}
     {% static 'blog/image/user.png' as user_pic %}
-    <div class="uk-grid">
-        <div class="uk-width-3-4">
+    <div class="uk-grid uk-grid-divider">
+        <div class="uk-width-medium-3-4">
             <article class="uk-article">
                 <h2 class="uk-article-title">{{ post.title }}</h2>
 
@@ -76,19 +76,22 @@
                 {% endif %}
             </ul>
         </div>
-        <div class="uk-width-1-4">
-            <div class="uk-panel">
+
+        <div class="uk-width-medium-1-4">
+            <hr class="uk-grid-divider uk-hidden-medium uk-hidden-large"/>
+            <div class="uk-panel uk-panel-hover">
                 <ul class="uk-list">
                     <li><a href="#">Hello</a></li>
                     <li><a href="#">World</a></li>
                     <li><a href="#">Hi</a></li>
                 </ul>
-            </div>
+
             <p>
                 {% for tag in tags %}
                     <a href="#"><span class="uk-badge uk-badge-notification">{{ tag.name }}</span></a>
                 {% endfor %}
             </p>
+            </div>
         </div>
     </div>
 
