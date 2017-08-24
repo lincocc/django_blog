@@ -20,7 +20,6 @@ class PostSerializer(CustomModelSerializer):
     class Meta:
         model = Post
         fields = '__all__'
-        extra_fields = ['user']
 
 
 class UserSerializer(CustomModelSerializer):
@@ -29,4 +28,3 @@ class UserSerializer(CustomModelSerializer):
     class Meta:
         model = User
         exclude = ('password',)
-        extra_fields = ['post_set']
