@@ -22,4 +22,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^blog/', include('blog.urls', namespace="blog")),
     url('^', include('blog.auth_url', namespace="blog_auth")),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
