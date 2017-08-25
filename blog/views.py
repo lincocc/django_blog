@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from blog.serializers import PostSerializer, UserSerializer
+from blog.serializers import PostSerializer, UserSerializer, CommentSerializer, TagSerializer
 from permissions import IsUserOrReadOnly
 from .form import PostForm, RegisterForm
 from .models import Post, Comment, Tag
@@ -135,14 +135,15 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.order_by('id').all()
     serializer_class = UserSerializer
 
 
-@api_view(['GET'])
-def api_root(request, format=None):
-    from rest_framework.reverse import reverse
-    return Response({
-        'users': reverse('blog:user-list', request=request, format=format),
-        'posts': reverse('blog:post-list', request=request, format=format)
-    })
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer

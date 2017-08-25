@@ -19,6 +19,7 @@ class Post(models.Model):
 
     class Meta:
         db_table = 'blog_posts'
+        ordering = ['-pub_date']
 
 
 class Comment(models.Model):
@@ -33,6 +34,7 @@ class Comment(models.Model):
 
     class Meta:
         db_table = 'blog_comments'
+        ordering = ['-pub_date']
 
 
 class Tag(models.Model):
@@ -45,3 +47,4 @@ class Tag(models.Model):
 
     class Meta:
         db_table = 'blog_tags'
+        ordering = ['name']
