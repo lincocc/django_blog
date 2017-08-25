@@ -118,3 +118,7 @@ STATIC_URL = '/static/'
 TEMPLATE_DIRS = (os.path.join(BASE_DIR, 'templates'),)
 
 LOGIN_REDIRECT_URL = '/'
+
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 10
+}

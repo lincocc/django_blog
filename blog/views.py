@@ -2,13 +2,14 @@ import uuid
 
 import markdown as markdown
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
 from django.urls import reverse
-from rest_framework import status, mixins, generics, permissions
+from rest_framework import status, mixins, generics, permissions, viewsets
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -147,3 +148,12 @@ class UserList(generics.ListCreateAPIView):
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    from rest_framework.reverse import reverse
+    return Response({
+        'users': reverse('blog:user-list', request=request, format=format),
+        'posts': reverse('blog:post-list', request=request, format=format)
+    })
