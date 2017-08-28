@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
@@ -113,6 +113,8 @@ class PostDetailView(DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated() or not request.user.has_perm('blog.add_comment'):
+            return HttpResponseForbidden()
         content = request.POST.get('content')
         post_uuid = self.kwargs.get(self.pk_url_kwarg)
         post = self.get_object()
@@ -136,6 +138,9 @@ def edit(request, post_id=None):
     #     return HttpResponseRedirect(reverse('blog:detail', args=(post_id,)))
 
     if request.method == 'POST':
+        if not request.user.is_authenticated() or not request.user.has_perm(
+                'blog.change_post') or request.user != post.user:
+            return HttpResponseForbidden()
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
