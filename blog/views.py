@@ -1,11 +1,12 @@
 import uuid
+from functools import wraps
 
 import markdown as markdown
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AnonymousUser
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse, Http404
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
@@ -15,6 +16,41 @@ from blog.serializers import PostSerializer, UserSerializer, CommentSerializer, 
 from permissions import IsUserOrReadOnly
 from .form import PostForm, RegisterForm
 from .models import Post, Comment, Tag
+
+
+def permission_required(perm, methods=('post', 'put', 'patch', 'delete')):
+    if isinstance(perm, str):
+        perm = (perm,)
+    if isinstance(methods, str):
+        methods = (methods,)
+    methods = [m.upper() for m in methods]
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(request, *args, **kwargs):
+            if request.method in methods and not request.user.has_perms(perm):
+                return HttpResponse(status=403, content='403 Forbidden, need %s perm.' % ','.join(perm))
+            return func(request, *args, **kwargs)
+
+        return wrapper
+
+    return decorator
+
+
+def self_or_403(request, user):
+    if request.user != user:
+        raise Exception('403 Forbidden, you are not %s .' % user.username)
+
+
+def self_required(user=AnonymousUser()):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(request, *args, **kwargs):
+            if not request.user.is_authenticated() or request.user != user:
+                return HttpResponse(status=403, content='403 Forbidden, you are not %s .' % user.username)
+            return func(request, *args, **kwargs)
+        return wrapper
+    return decorator
 
 
 def index(request):
@@ -112,9 +148,8 @@ class PostDetailView(DetailView):
         context.update({'comments': comments, 'tags': tags})
         return context
 
+    @permission_required(perm='blog.add_comment')
     def post(self, request, *args, **kwargs):
-        if not request.user.is_authenticated() or not request.user.has_perm('blog.add_comment'):
-            return HttpResponseForbidden()
         content = request.POST.get('content')
         post_uuid = self.kwargs.get(self.pk_url_kwarg)
         post = self.get_object()
@@ -124,6 +159,7 @@ class PostDetailView(DetailView):
 
 
 @login_required(login_url='blog_auth:login')
+@permission_required(perm=('blog.change_post', 'blog.delete_post'))
 def edit(request, post_id=None):
     post = Post.objects.get(pk=uuid.UUID(post_id))
 
@@ -138,9 +174,9 @@ def edit(request, post_id=None):
     #     return HttpResponseRedirect(reverse('blog:detail', args=(post_id,)))
 
     if request.method == 'POST':
-        if not request.user.is_authenticated() or not request.user.has_perm(
-                'blog.change_post') or request.user != post.user:
-            return HttpResponseForbidden()
+        # if not request.user.is_authenticated() or not request.user.has_perm(
+        #         'blog.change_post') or request.user != post.user:
+        #     return HttpResponseForbidden()
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
