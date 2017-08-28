@@ -2,16 +2,14 @@ import uuid
 
 import markdown as markdown
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, Permission
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
-from django.http import HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
-from rest_framework import status, mixins, generics, permissions, viewsets
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from django.views.generic import ListView, DetailView
+from rest_framework import permissions, viewsets
 
 from blog.serializers import PostSerializer, UserSerializer, CommentSerializer, TagSerializer
 from permissions import IsUserOrReadOnly
@@ -34,6 +32,23 @@ def index(request):
 
     context = {'posts': posts, 'page_range': get_page_range(posts.number, paginator)}
     return render(request, 'blog/index.html', context)
+
+
+class IndexView(ListView):
+    queryset = Post.objects.order_by('-pub_date').all()
+    paginate_by = 10
+    template_name = 'blog/index.html'
+    context_object_name = 'posts'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        posts = context[self.context_object_name]
+        posts.number = page_obj.number
+        if paginator and page_obj:
+            context.update({'page_range': get_page_range(page_obj.number, paginator)})
+        return context
 
 
 def get_page_range(current_page, paginator):
@@ -75,6 +90,35 @@ def detail(request, post_id):
     tags = Tag.objects.annotate(post_count=Count('posts')).order_by('-post_count')[:5]
     context = {'post': post, 'comments': comments, 'tags': tags}
     return render(request, 'blog/detail.html', context)
+
+
+class PostDetailView(DetailView):
+    model = Post
+    context_object_name = 'post'
+    pk_url_kwarg = 'post_id'
+    template_name = 'blog/detail.html'
+
+    def get_object(self, queryset=None):
+        post_uuid = self.kwargs.get(self.pk_url_kwarg)
+        return get_object_or_404(self.model, pk=uuid.UUID(post_uuid))
+
+    def get_context_data(self, **kwargs):
+        context = super(PostDetailView, self).get_context_data(**kwargs)
+        post = context[self.context_object_name]
+        post.content = markdown.markdown(post.content,
+                                         extensions=['markdown.extensions.extra', 'markdown.extensions.codehilite'])
+        comments = post.comment_set.order_by('-pub_date').all()
+        tags = Tag.objects.annotate(post_count=Count('posts')).order_by('-post_count')[:5]
+        context.update({'comments': comments, 'tags': tags})
+        return context
+
+    def post(self, request, *args, **kwargs):
+        content = request.POST.get('content')
+        post_uuid = self.kwargs.get(self.pk_url_kwarg)
+        post = self.get_object()
+        if content:
+            Comment.objects.create(content=content, user=request.user, post=post)
+            return HttpResponseRedirect(reverse('blog:detail', args=(post_uuid,)))
 
 
 @login_required(login_url='blog_auth:login')
