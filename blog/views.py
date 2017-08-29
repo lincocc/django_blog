@@ -4,9 +4,10 @@ from functools import wraps
 import markdown as markdown
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, AnonymousUser
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
-from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse, Http404
+from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse, Http404, HttpRequest
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, DetailView
@@ -26,11 +27,17 @@ def permission_required(perm, methods=('post', 'put', 'patch', 'delete')):
     methods = [m.upper() for m in methods]
 
     def decorator(func):
+        print(func)
+
         @wraps(func)
-        def wrapper(request, *args, **kwargs):
+        def wrapper(*args, **kwargs):
+            request = args[len(args) - 1]
+            if not isinstance(request, HttpRequest):
+                raise TypeError
             if request.method in methods and not request.user.has_perms(perm):
-                return HttpResponse(status=403, content='403 Forbidden, need %s perm.' % ','.join(perm))
-            return func(request, *args, **kwargs)
+                raise PermissionDenied
+                # return HttpResponse(status=403, content='403 Forbidden, need %s perm.' % ','.join(perm))
+            return func(*args, **kwargs)
 
         return wrapper
 
@@ -49,7 +56,9 @@ def self_required(user=AnonymousUser()):
             if not request.user.is_authenticated() or request.user != user:
                 return HttpResponse(status=403, content='403 Forbidden, you are not %s .' % user.username)
             return func(request, *args, **kwargs)
+
         return wrapper
+
     return decorator
 
 
