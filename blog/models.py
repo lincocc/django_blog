@@ -3,6 +3,9 @@ import uuid
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from django.core.signals import request_finished, request_started
+from django.dispatch import receiver
+from django.db.models.signals import post_save, pre_save
 
 
 class Post(models.Model):
@@ -48,3 +51,27 @@ class Tag(models.Model):
     class Meta:
         db_table = 'blog_tags'
         ordering = ['name']
+
+
+@receiver(post_save, sender=Comment)
+def handle_comment_post(sender, instance=None, created=False, **kwargs):
+    print("post save:%s" % sender)
+    print(kwargs)
+
+
+@receiver(pre_save, sender=Comment)
+def handle_comment_pre(sender, **kwargs):
+    print("pre save:%s" % sender)
+    print(kwargs)
+
+
+# @receiver(request_started)
+# def handle_request_started(sender, **kwargs):
+#     print("request_started:%s" % sender)
+#     print(kwargs)
+#
+#
+# @receiver(request_finished)
+# def handle_request_finished(sender, **kwargs):
+#     print("request_finished:%s" % sender)
+#     print(kwargs)
