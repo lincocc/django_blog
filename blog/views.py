@@ -18,6 +18,8 @@ from permissions import IsUserOrReadOnly
 from .form import PostForm, RegisterForm
 from .models import Post, Comment, Tag
 
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+
 
 def permission_required(perm, methods=('post', 'put', 'patch', 'delete')):
     if isinstance(perm, str):
@@ -237,6 +239,7 @@ def register(request):
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsUserOrReadOnly,)
 
@@ -252,6 +255,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
 
 
 class TagViewSet(viewsets.ModelViewSet):
