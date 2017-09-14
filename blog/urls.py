@@ -13,6 +13,8 @@ router.register(r'tags', TagViewSet)
 urlpatterns = [
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^(?P<post_id>[0-9a-fA-F-]+)/$', views.PostDetailView.as_view(), name='detail'),
+    url(r'^tag/$', views.TagIndexView.as_view(), name='tag_index'),
+    url(r'^tag/(?P<pk>[0-9a-fA-F-]+)/$', views.TagView.as_view(), name='tag'),
     url(r'^edit/(?P<post_id>[0-9a-fA-F-]+)/$', views.edit, name='edit'),
     url(r'^api/', include(router.urls))
 ]

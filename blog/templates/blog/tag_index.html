@@ -1,0 +1,23 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+    <div class="uk-grid uk-grid-divider">
+        <div class="uk-width-medium-3-4">
+            {% for tag in tags %}
+                <div class="uk-visible-hover-inline">
+                    {% with tag.name as tag_name %}
+                        <h3><a id="{{ tag_name }}" href="#{{ tag_name }}">{{ tag_name }}</a>
+                            <a class="uk-hidden" href="#">¶</a></h3>
+                    {% endwith %}
+                </div>
+                <ul class="uk-list uk-list-striped">
+                    {% for post in tag.posts.all %}
+                        <li><a href="{% url 'blog:detail' post.id.hex %}">{{ post.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

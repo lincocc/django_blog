@@ -167,6 +167,22 @@ class PostDetailView(DetailView):
             return HttpResponseRedirect(reverse('blog:detail', args=(post_uuid,)))
 
 
+class TagIndexView(ListView):
+    model = Tag
+    context_object_name = 'tags'
+    template_name = 'blog/tag_index.html'
+
+
+class TagView(DetailView):
+    model = Tag
+    context_object_name = 'tag'
+    template_name = 'blog/tag.html'
+
+    def get_object(self, queryset=None):
+        tag_uuid = self.kwargs.get(self.pk_url_kwarg)
+        return get_object_or_404(self.model, pk=uuid.UUID(tag_uuid))
+
+
 @login_required(login_url='blog_auth:login')
 @permission_required(perm=('blog.change_post', 'blog.delete_post'))
 def edit(request, post_id=None):

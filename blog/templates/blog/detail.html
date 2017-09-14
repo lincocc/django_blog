@@ -79,7 +79,7 @@
 
         <div class="uk-width-medium-1-4">
             <hr class="uk-grid-divider uk-hidden-medium uk-hidden-large"/>
-            <div class="uk-panel uk-panel-hover">
+            <div class="uk-panel uk-panel-box">
                 <ul class="uk-list">
                     <li><a href="#">Hello</a></li>
                     <li><a href="#">World</a></li>
@@ -88,7 +88,7 @@
 
             <p>
                 {% for tag in tags %}
-                    <a href="#"><span class="uk-badge uk-badge-notification">{{ tag.name }}</span></a>
+                    <a href="{% url 'blog:tag_index'%}#{{ tag.name }}"><span class="uk-badge uk-badge-notification">{{ tag.name }}</span></a>
                 {% endfor %}
             </p>
             </div>
