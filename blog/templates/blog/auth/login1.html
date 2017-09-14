@@ -13,69 +13,74 @@
 </head>
 <body class="uk-height-1-1">
 
-
+{% load i18n static %}
 <div class="uk-vertical-align uk-text-center uk-height-1-1">
-{#    {% if form.errors and not form.non_field_errors %}#}
-{#        <p class="">#}
-{#            {% if form.errors.items|length == 1 %}#}
-{#                "Please correct the error below."#}
-{#            {% else %}#}
-{#                "Please correct the errors below."#}
-{#            {% endif %}#}
-{#        </p>#}
-{#    {% endif %}#}
-{##}
-{#    {% if form.non_field_errors %}#}
-{#        {% for error in form.non_field_errors %}#}
-{#            <p class="">#}
-{#                {{ error }}#}
-{#            </p>#}
-{#        {% endfor %}#}
-{#    {% endif %}#}
-{#    {% if user.is_authenticated %}#}
-{#        <p class="">#}
-{#            "You are authenticated as {{ user.username }}, but are not authorized to#}
-{#            access this page. Would you like to login to a different account?"#}
-{#        </p>#}
-{#    {% endif %}#}
-        <div class="uk-vertical-align-middle" style="width: 320px">
-            <form id="vm" method="post" class="uk-panel uk-form">
-                {% csrf_token %}
-                <div class="uk-alert uk-alert-danger uk-hidden"></div>
-                <div class="uk-form-row">
-                    <div class="uk-form-icon uk-width-1-1">
-                        <i class="uk-icon-user"></i>
-                        {{ form.username.errors }}
-                        <input type="text" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}"
-                               value="{{ form.username.value|default:'' }}" minlength="8" maxlength="50"
-                               class="uk-width-1-1 uk-form-large" required>
-                    </div>
-                </div>
-                <div class="uk-form-row">
-                    <div class="uk-form-icon uk-width-1-1">
-                        <i class="uk-icon-lock"></i>
-                        {{ form.password.errors }}
-                        <input type="password" id="{{ form.password.id_for_label }}"
-                               name="{{ form.password.html_name }}"
-                               value="{{ form.password.value|default:'' }}" minlength="8" maxlength="50"
-                               class="uk-width-1-1 uk-form-large" required>
-                    </div>
-                    <input type="hidden" name="next" value="{{ next }}"/>
-                </div>
-                {% url 'admin_password_reset' as password_reset_url %}
-                {% if password_reset_url %}
-                    <div class="password-reset-link">
-                        <a href="{{ password_reset_url }}">'Forgotten your password or username?'</a>
-                    </div>
+
+    <div class="uk-vertical-align-middle uk-panel uk-panel-box uk-container-center" style="width: 340px">
+
+        {% if form.errors and not form.non_field_errors %}
+            <div class="uk-alert uk-alert-danger uk-text-left" data-uk-alert>
+                <a href="" class="uk-alert-close uk-close"></a>
+                {% if form.errors.items|length == 1 %}
+                    {% trans "Please correct the error below." %}
+                {% else %}
+                    {% trans "Please correct the errors below." %}
                 {% endif %}
-                <div class="uk-form-row">
-                    <button type="submit" class="uk-width-1-1 uk-button uk-button-primary uk-button-large"><i
-                            class="uk-icon-sign-in"></i> 登录
-                    </button>
+            </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="uk-alert uk-alert-danger uk-text-left" data-uk-alert>
+                    <a href="" class="uk-alert-close uk-close"></a>
+                    {{ error }}
                 </div>
-            </form>
-        </div>
+            {% endfor %}
+        {% endif %}
+{#        {% if user.is_authenticated %}#}
+{#            <div class="uk-alert uk-alert-danger uk-text-left" data-uk-alert>#}
+{#                <a href="" class="uk-alert-close uk-close"></a>#}
+{#                You are authenticated as {{ user.username }}, but are not authorized to#}
+{#                access this page. Would you like to login to a different account?#}
+{#            </div>#}
+{#        {% endif %}#}
+        <form id="vm" method="post" class="uk-form">
+            {% csrf_token %}
+            <div class="uk-alert uk-alert-danger uk-hidden"></div>
+            <div class="uk-form-row">
+                <div class="uk-form-icon uk-width-1-1">
+                    <i class="uk-icon-user"></i>
+                    {{ form.username.errors }}
+                    <input type="text" id="{{ form.username.id_for_label }}" name="{{ form.username.html_name }}"
+                           value="{{ form.username.value|default:'' }}" minlength="5" maxlength="50"
+                           class="uk-width-1-1 uk-form-large" required>
+                </div>
+            </div>
+            <div class="uk-form-row">
+                <div class="uk-form-icon uk-width-1-1">
+                    <i class="uk-icon-lock"></i>
+                    {{ form.password.errors }}
+                    <input type="password" id="{{ form.password.id_for_label }}"
+                           name="{{ form.password.html_name }}"
+                           value="{{ form.password.value|default:'' }}" minlength="8" maxlength="50"
+                           class="uk-width-1-1 uk-form-large" required>
+                </div>
+                <input type="hidden" name="next" value="{{ next }}"/>
+            </div>
+            {% url 'blog_auth:password_reset' as password_reset_url %}
+            {% if password_reset_url %}
+                <div class="uk-form-row">
+                    <a href="{{ password_reset_url }}">{% trans "Forgotten your password or username?" %}</a>
+                </div>
+            {% endif %}
+            <div class="uk-form-row">
+                <button type="submit" class="uk-width-1-1 uk-button uk-button-primary uk-button-large"><i
+                        class="uk-icon-sign-in"></i> {% trans "Log in" %}
+                </button>
+            </div>
+        </form>
     </div>
+</div>
 
 </body>
 </html>
