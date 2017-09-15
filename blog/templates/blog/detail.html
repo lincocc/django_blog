@@ -22,7 +22,7 @@
                         <a href="#"><span class="uk-badge uk-badge-notification">{{ tag.name }}</span></a>
                     {% endfor %}
                 </p>
-                <p>{{ post.content|safe }}</p>
+                <div id="post_body">{{ post.content|safe }}</div>
             </article>
             <hr class="uk-article-divider"/>
 
@@ -79,20 +79,28 @@
 
         <div class="uk-width-medium-1-4">
             <hr class="uk-grid-divider uk-hidden-medium uk-hidden-large"/>
-            <div class="uk-panel uk-panel-box">
-                <ul class="uk-list">
-                    <li><a href="#">Hello</a></li>
-                    <li><a href="#">World</a></li>
-                    <li><a href="#">Hi</a></li>
+            <div class="uk-panel uk-panel-box" data-uk-sticky="{top:55}">
+                <h3 class="uk-panel-title">CATALOG</h3>
+                <ul id='catalog' class="uk-nav uk-nav-side">
                 </ul>
-
-            <p>
-                {% for tag in tags %}
-                    <a href="{% url 'blog:tag_index'%}#{{ tag.name }}"><span class="uk-badge uk-badge-notification">{{ tag.name }}</span></a>
-                {% endfor %}
-            </p>
+                <hr class="uk-panel-divider"/>
+                <p>
+                    {% for tag in tags %}
+                        <a href="{% url 'blog:tag_index' %}#{{ tag.name }}"><span
+                                class="uk-badge uk-badge-notification">{{ tag.name }}</span></a>
+                    {% endfor %}
+                </p>
             </div>
         </div>
     </div>
-
+    <script>
+        var article = $('#post_body');
+        var catalog = $('#catalog');
+        article.children().filter('h1,h2,h3,h4,h5,h6').each(
+            function (n, e) {
+                var text = e.innerText.replace(' ', '');
+                $(this).attr('id', text);
+                catalog.append('<li><a class="' + e.tagName.toLowerCase() + '_tag' + '" href="#' + text + '">' + text + '</a></li>');
+            });
+    </script>
 {% endblock %}

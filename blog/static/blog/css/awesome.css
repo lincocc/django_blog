@@ -19,3 +19,22 @@ a:hover, a:active {
 .CodeMirror {
 	height: 300px;
 }
+
+.h1_tag{
+    margin-left: 0;
+}
+.h2_tag{
+    margin-left: 1px;
+}
+.h3_tag{
+    margin-left: 2px;
+}
+.h4_tag{
+    margin-left: 4px;
+}
+.h5_tag{
+    margin-left: 6px;
+}
+.h6_tag{
+    margin-left: 8px;
+}
