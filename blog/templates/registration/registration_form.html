@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+{% load uikit %}
+{% block title %}Register{% endblock %}
+{% block beforehead %}
+    {% autoescape off %}
+        <script>
+            function checksubmit() {
+                var p1id = "{{ form.password.id_for_label }}";
+                var p1 = $('#' + p1id);
+                var p2id = "{{ form.password2.id_for_label }}";
+                var p2 = $('#' + p2id);
+                if (p1.val().trim() !== p2.val().trim()) {
+                    p2.addClass("uk-form-danger");
+                    return false;
+                }
+                return true;
+            }
+
+        </script>
+    {% endautoescape %}
+{% endblock %}
+{% block content %}
+    <form method="post" class="uk-form uk-form-horizontal" onsubmit="return checksubmit()">
+        {% csrf_token %}
+        {% uikit_form form %}
+        <div class="uk-form-row">
+            <button type="submit" class="uk-button uk-button-primary">register</button>
+        </div>
+    </form>
+{% endblock %}
+
